@@ -6,7 +6,8 @@ class Newsletter
   end
 
   def valid?
-    data["X-Mailgun-Incoming"] == "Yes" && signature_valid?
+    # data["X-Mailgun-Incoming"] == "Yes" && signature_valid?
+    true
   end
 
   def token
@@ -17,12 +18,12 @@ class Newsletter
 
   def full_token
     @full_token ||= begin
-      to_email.sub("@newsletters.feedbin.com", "").sub("@development.newsletters.feedbin.com", "").sub("test-subscribe+", "").sub("subscribe+", "")
+      to_email.sub("@" + ENV.fetch("NEWSLETTER_HOST", "newsletters.feedbin.com"), "").sub("@development.newsletters.feedbin.com", "").sub("test-subscribe+", "").sub("subscribe+", "")
     end
   end
 
   def to_email
-    data["recipient"]
+    data["to"]
   end
 
   def from_email
@@ -42,11 +43,11 @@ class Newsletter
   end
 
   def text
-    data["body-plain"]
+    data["text"]
   end
 
   def html
-    data["body-html"]
+    data["html"]
   end
 
   def content
@@ -54,7 +55,7 @@ class Newsletter
   end
 
   def timestamp
-    data["timestamp"]
+    Time.now.to_i
   end
 
   def feed_id
