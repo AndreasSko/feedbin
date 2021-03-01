@@ -23,7 +23,7 @@ class Newsletter
   end
 
   def to_email
-    data["to"]
+    parsed_to.address
   end
 
   def from_email
@@ -89,6 +89,14 @@ class Newsletter
   end
 
   private
+
+  def parsed_to
+    Mail::Address.new(data["to"])
+  rescue Mail::Field::ParseError
+    name, address = data["to"].split(/[<>]/).map(&:strip)
+    domain = address.split("@").last
+    OpenStruct.new(name: name, address: address, domain: domain)
+  end
 
   def parsed_from
     Mail::Address.new(data["from"])
