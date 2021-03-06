@@ -43,7 +43,7 @@
                     <button class="back-button" data-behavior="show_feeds">
                         <%= svg_tag "icon-arrow", size: "9x15" %>
                     </button>
-                    <span class="feed-title-wrap"></span>
+                    <span class="feed-title-wrap"><span data-behavior="user_title"></span></span>
                     <button class="search-button" data-behavior="toggle_search"><%= svg_tag "icon-search", size: "16x16" %></button>
                 </div>
                 <div class="search-wrap">
@@ -132,8 +132,9 @@
     <%= render partial: "shared/modals/search" %>
     <%= render partial: "shared/readability_loading" %>
     <%= render partial: "shared/saved_searches_count" %>
-    <%= render partial: 'shared/format' %>
-
+    <%= render partial: "shared/format" %>
+    <%= render partial: "shared/link_actions" %>
+    
     <%= form_tag(cache_extracts_path, method: :get, class: 'hide', remote: true, data: {behavior: 'extract_cache_form'}) do %>
         <%= hidden_field_tag 'url', nil %>
     <% end %>
