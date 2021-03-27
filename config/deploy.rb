@@ -1,3 +1,6 @@
+# config valid only for current version of Capistrano
+lock "3.15"
+
 set :branch, "master"
 
 set :application, "feedbin"

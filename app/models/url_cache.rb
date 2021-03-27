@@ -7,7 +7,7 @@ class UrlCache
   end
 
   def cache_key
-    "url_cache_#{Digest::SHA1.hexdigest("#{url}#{options}")}"
+    "#{url}#{options}"
   end
 
   def body
