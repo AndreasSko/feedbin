@@ -1,4 +1,4 @@
-name: Ruby CI
+name: CI
 
 on: [push, pull_request]
 
@@ -47,8 +47,12 @@ jobs:
         sudo wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
         echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee /etc/apt/sources.list.d/elasticsearch-2.x.list
 
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+
         sudo apt-get update
-        sudo apt-get install --yes openjdk-8-jre elasticsearch libidn11-dev libidn11-dev libpq-dev postgresql-client-11 imagemagick libmagickwand-dev libreadline-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev libssl-dev zlib1g-dev libffi-dev memcached
+        sudo apt-get install --yes openjdk-8-jre elasticsearch libidn11-dev libidn11-dev libpq-dev  \
+        postgresql-client-11 imagemagick libmagickwand-dev libreadline-dev libxml2-dev libxslt1-dev \
+        libcurl4-openssl-dev libssl-dev zlib1g-dev libffi-dev memcached nodejs
         sudo service elasticsearch restart
 
         sudo wget "https://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip" -O /tmp/chromedriver.zip
@@ -86,3 +90,11 @@ jobs:
         bundle exec rake db:setup
         bundle exec rake db:test:prepare
         bundle exec rails test:system test
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: screenshots ${{ matrix.os }}-${{ matrix.ruby }}
+        path: tmp/screenshots
+        if-no-files-found: ignore
