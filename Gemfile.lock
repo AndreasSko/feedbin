@@ -22,6 +22,13 @@ GIT
       fog-aws
 
 GIT
+  remote: https://github.com/feedbin/dalli.git
+  revision: 3c92218fadfc20b6fb839f99ac36703ca96167ea
+  branch: feedbin
+  specs:
+    dalli (2.7.10)
+
+GIT
   remote: https://github.com/feedbin/elasticsearch-rails.git
   revision: aa2033bb891a3b2545cb3ff633918fcf64c901e5
   branch: 2.x
@@ -44,7 +51,7 @@ GIT
 
 GIT
   remote: https://github.com/feedbin/feedkit.git
-  revision: 7244039d7ba9eca954b4d613c712364023a6206a
+  revision: d045afad01ee5c225d33d566ad19a4372d8bdae4
   branch: master
   specs:
     feedkit (0.1.0)
@@ -64,8 +71,8 @@ GIT
 
 GIT
   remote: https://github.com/feedbin/html-pipeline.git
-  revision: 1e77ecf4e72dd2bad7f1a6d139e08942eed2f331
-  ref: 1e77ecf
+  revision: d74d4ae9d0bdbe3393654e5c4e3be80e8ce43649
+  branch: feedbin
   specs:
     html-pipeline (2.4.2)
       activesupport (>= 2)
@@ -106,6 +113,13 @@ GIT
       nokogiri
 
 GIT
+  remote: https://github.com/feedbin/sax-machine.git
+  revision: 80c6e3b9eb4ab0ac16a0eeaac13d10a713d10423
+  branch: feedbin
+  specs:
+    sax-machine (1.3.2)
+
+GIT
   remote: https://github.com/feedbin/twitter.git
   revision: 56b2ee834ab8d2bafc12e89f8147523c8954a1d7
   branch: feedbin
@@ -125,63 +139,67 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    actioncable (6.0.3.6)
-      actionpack (= 6.0.3.6)
+    actioncable (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
-    actionmailbox (6.0.3.6)
-      actionpack (= 6.0.3.6)
-      activejob (= 6.0.3.6)
-      activerecord (= 6.0.3.6)
-      activestorage (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
+    actionmailbox (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      activejob (= 6.1.3.1)
+      activerecord (= 6.1.3.1)
+      activestorage (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       mail (>= 2.7.1)
-    actionmailer (6.0.3.6)
-      actionpack (= 6.0.3.6)
-      actionview (= 6.0.3.6)
-      activejob (= 6.0.3.6)
+    actionmailer (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      actionview (= 6.1.3.1)
+      activejob (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 2.0)
-    actionpack (6.0.3.6)
-      actionview (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
-      rack (~> 2.0, >= 2.0.8)
+    actionpack (6.1.3.1)
+      actionview (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
+      rack (~> 2.0, >= 2.0.9)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
-    actiontext (6.0.3.6)
-      actionpack (= 6.0.3.6)
-      activerecord (= 6.0.3.6)
-      activestorage (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
+    actiontext (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      activerecord (= 6.1.3.1)
+      activestorage (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       nokogiri (>= 1.8.5)
-    actionview (6.0.3.6)
-      activesupport (= 6.0.3.6)
+    actionview (6.1.3.1)
+      activesupport (= 6.1.3.1)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activejob (6.0.3.6)
-      activesupport (= 6.0.3.6)
+    activejob (6.1.3.1)
+      activesupport (= 6.1.3.1)
       globalid (>= 0.3.6)
-    activemodel (6.0.3.6)
-      activesupport (= 6.0.3.6)
-    activerecord (6.0.3.6)
-      activemodel (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
+    activemodel (6.1.3.1)
+      activesupport (= 6.1.3.1)
+    activerecord (6.1.3.1)
+      activemodel (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
     activerecord-import (1.0.8)
       activerecord (>= 3.2)
-    activestorage (6.0.3.6)
-      actionpack (= 6.0.3.6)
-      activejob (= 6.0.3.6)
-      activerecord (= 6.0.3.6)
+    activestorage (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      activejob (= 6.1.3.1)
+      activerecord (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       marcel (~> 1.0.0)
-    activesupport (6.0.3.6)
+      mini_mime (~> 1.0.2)
+    activesupport (6.1.3.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (>= 0.7, < 2)
-      minitest (~> 5.1)
-      tzinfo (~> 1.1)
-      zeitwerk (~> 2.2, >= 2.2.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+      zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.3)
@@ -194,8 +212,6 @@ GEM
     autoprefixer-rails (10.2.4.0)
       execjs
     bcrypt (3.1.16)
-    bcrypt-ruby (3.1.5)
-      bcrypt (>= 3.1.3)
     benchmark-ips (2.8.4)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
@@ -253,7 +269,7 @@ GEM
       addressable
     curb (0.9.11)
     dante (0.2.0)
-    debug_inspector (1.0.0)
+    debug_inspector (1.1.0)
     docile (1.3.5)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -349,7 +365,7 @@ GEM
       activesupport (>= 3.0)
       librato-rack (~> 1.1.0)
       railties (>= 3.0)
-    listen (3.4.1)
+    listen (3.5.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     lograge (0.11.2)
@@ -391,8 +407,6 @@ GEM
     nokogiri (1.11.2)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    nokogiri (1.11.2-arm64-darwin)
-      racc (~> 1.4)
     nokogiri (1.11.2-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.11.2-x86_64-linux)
@@ -419,20 +433,20 @@ GEM
       rack (>= 1.0, < 3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
-    rails (6.0.3.6)
-      actioncable (= 6.0.3.6)
-      actionmailbox (= 6.0.3.6)
-      actionmailer (= 6.0.3.6)
-      actionpack (= 6.0.3.6)
-      actiontext (= 6.0.3.6)
-      actionview (= 6.0.3.6)
-      activejob (= 6.0.3.6)
-      activemodel (= 6.0.3.6)
-      activerecord (= 6.0.3.6)
-      activestorage (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
-      bundler (>= 1.3.0)
-      railties (= 6.0.3.6)
+    rails (6.1.3.1)
+      actioncable (= 6.1.3.1)
+      actionmailbox (= 6.1.3.1)
+      actionmailer (= 6.1.3.1)
+      actionpack (= 6.1.3.1)
+      actiontext (= 6.1.3.1)
+      actionview (= 6.1.3.1)
+      activejob (= 6.1.3.1)
+      activemodel (= 6.1.3.1)
+      activerecord (= 6.1.3.1)
+      activestorage (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
+      bundler (>= 1.15.0)
+      railties (= 6.1.3.1)
       sprockets-rails (>= 2.0.0)
     rails-controller-testing (1.0.5)
       actionpack (>= 5.0.1.rc1)
@@ -443,12 +457,12 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.3.0)
       loofah (~> 2.3)
-    railties (6.0.3.6)
-      actionpack (= 6.0.3.6)
-      activesupport (= 6.0.3.6)
+    railties (6.1.3.1)
+      actionpack (= 6.1.3.1)
+      activesupport (= 6.1.3.1)
       method_source
       rake (>= 0.8.7)
-      thor (>= 0.20.3, < 2.0)
+      thor (~> 1.0)
     rainbow (3.0.0)
     raindrops (0.19.1)
     rake (13.0.3)
@@ -500,7 +514,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    sax-machine (1.3.2)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
@@ -551,8 +564,8 @@ GEM
     twitter-text (3.1.0)
       idn-ruby
       unf (~> 0.1.0)
-    tzinfo (1.2.9)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
@@ -578,7 +591,6 @@ GEM
     zeitwerk (2.4.2)
 
 PLATFORMS
-  arm64-darwin-20
   ruby
   x86_64-darwin-20
   x86_64-linux
@@ -589,7 +601,6 @@ DEPENDENCIES
   apnotic
   autoprefixer-rails
   bcrypt
-  bcrypt-ruby
   benchmark-ips
   better_errors
   binding_of_caller
@@ -606,6 +617,7 @@ DEPENDENCIES
   connection_pool
   coveralls
   curb
+  dalli!
   dotenv-rails
   elasticsearch (~> 2.0)
   elasticsearch-model!
@@ -638,7 +650,7 @@ DEPENDENCIES
   premailer-rails
   puma
   rack-attack
-  rails (= 6.0.3.6)
+  rails (= 6.1.3.1)
   rails-controller-testing
   raindrops
   redcarpet
@@ -649,6 +661,7 @@ DEPENDENCIES
   rubyzip
   sanitize
   sass-rails
+  sax-machine!
   selenium-webdriver
   sidekiq
   silencer
