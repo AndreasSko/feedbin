@@ -1,0 +1,17 @@
+name: Trigger Docker Build
+
+on: 
+  push: 
+    branches:
+      - master
+    
+jobs:
+  trigger-feedbin-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Build workflow on andreassko/feedbin-docker
+        uses: benc-uk/workflow-dispatch@v1.1
+        with:
+          workflow: Build
+          repo: andreassko/feedbin-docker
+          token: ${{ secrets.WORKFLOW_DISPATCH_GH_TOKEN }}
