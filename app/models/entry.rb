@@ -13,7 +13,7 @@ class Entry < ApplicationRecord
   before_create :ensure_published
   before_create :create_summary
   before_create :update_content
-  before_create :tweet_url
+  before_create :tweet_metadata
   before_update :create_summary
   after_commit :cache_public_id, on: :create
   after_commit :find_images, on: :create
@@ -328,9 +328,10 @@ class Entry < ApplicationRecord
     self.content = original
   end
 
-  def tweet_url
+  def tweet_metadata
     if main_tweet
       self.url = main_tweet.uri.to_s
+      self.main_tweet_id = main_tweet.id
     end
   rescue
   end
@@ -414,8 +415,12 @@ class Entry < ApplicationRecord
         end
       end
 
-      subscriptions = Subscription.where(filters).pluck(:user_id)
-      unread_entries = subscriptions.each_with_object([]) { |user_id, array|
+      user_ids = Subscription.where(filters).pluck(:user_id)
+      unread_entries = user_ids.each_with_object([]) { |user_id, array|
+        if tweet?
+          has_tweet = User.where(id: user_id).take&.has_tweet?(main_tweet_id)
+          Librato.increment("user.has_tweet", source: has_tweet.to_s)
+        end
         array << UnreadEntry.new(user_id: user_id, feed_id: feed_id, entry_id: id, published: published, entry_created_at: created_at)
       }
       UnreadEntry.import(unread_entries, validate: false, on_duplicate_key_ignore: true)
@@ -477,8 +482,14 @@ class Entry < ApplicationRecord
     end
   end
 
+  def has_embeds?
+    return true if youtube?
+    return true if content.respond_to?(:include?) && content.include?("iframe")
+    return false
+  end
+
   def harvest_embeds
-    HarvestEmbeds.perform_async(id)
+    HarvestEmbeds.perform_async(id) if has_embeds?
   end
 
   def harvest_links
@@ -486,7 +497,7 @@ class Entry < ApplicationRecord
   end
 
   def cache_views
-    CacheEntryViews.perform_async(id)
+    CacheEntryViews.new.perform(id)
   end
 
   def save_twitter_users

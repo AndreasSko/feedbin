@@ -106,6 +106,13 @@ GIT
       nokogiri
 
 GIT
+  remote: https://github.com/feedbin/resolv.git
+  revision: c80893765dcd50e9d34b3e9dbd427cc651dc55cf
+  branch: feedbin
+  specs:
+    resolv (0.2.0)
+
+GIT
   remote: https://github.com/feedbin/sax-machine.git
   revision: 80c6e3b9eb4ab0ac16a0eeaac13d10a713d10423
   branch: feedbin
@@ -196,16 +203,14 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.3)
-    airbrussh (1.4.0)
-      sshkit (>= 1.6.1, != 1.7.0)
     apnotic (1.6.1)
       connection_pool (~> 2)
       net-http2 (>= 0.18.3, < 2)
     ast (2.4.2)
-    autoprefixer-rails (10.2.5.0)
-      execjs (< 2.8.0)
+    autoprefixer-rails (10.2.5.1)
+      execjs (> 0)
     bcrypt (3.1.16)
-    benchmark-ips (2.8.4)
+    benchmark-ips (2.9.1)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -217,16 +222,6 @@ GEM
     buftok (0.2.0)
     builder (3.2.4)
     byebug (11.1.3)
-    capistrano (3.16.0)
-      airbrussh (>= 1.0.0)
-      i18n
-      rake (>= 10.0.0)
-      sshkit (>= 1.9.0)
-    capistrano-bundler (2.0.1)
-      capistrano (~> 3.1)
-    capistrano-rails (1.6.1)
-      capistrano (~> 3.1)
-      capistrano-bundler (>= 1.1, < 3)
     capybara (3.35.3)
       addressable
       mini_mime (>= 0.1.3)
@@ -283,15 +278,15 @@ GEM
     evernote_oauth (0.2.3)
       evernote-thrift
       oauth (>= 0.4.1)
-    excon (0.81.0)
-    execjs (2.7.0)
+    excon (0.82.0)
+    execjs (2.8.1)
     faker (2.18.0)
       i18n (>= 1.6, < 2)
     faraday (0.17.4)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
-    ffi (1.15.0)
+    ffi (1.15.1)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
@@ -345,7 +340,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.5.1)
-    kgio (2.11.3)
+    kgio (2.11.4)
     librato-metrics (1.6.2)
       aggregate (~> 0.2.2)
       faraday (>= 0.7, < 2.0)
@@ -392,16 +387,15 @@ GEM
       connection_pool (~> 2.2)
     net-http2 (0.18.4)
       http-2 (~> 0.11)
-    net-scp (3.0.0)
-      net-ssh (>= 2.6.5, < 7.0.0)
-    net-ssh (6.1.0)
     nio4r (2.5.7)
-    nokogiri (1.11.4)
+    nokogiri (1.11.6)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    nokogiri (1.11.4-x86_64-darwin)
+    nokogiri (1.11.6-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.11.4-x86_64-linux)
+    nokogiri (1.11.6-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.11.6-x86_64-linux)
       racc (~> 1.4)
     nokogumbo (2.0.5)
       nokogiri (~> 1.8, >= 1.8.4)
@@ -423,7 +417,7 @@ GEM
       actionmailer (>= 3)
       premailer (~> 1.7, >= 1.7.9)
     public_suffix (4.0.6)
-    puma (5.3.1)
+    puma (5.3.2)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -462,7 +456,7 @@ GEM
       rake (>= 0.8.7)
       thor (~> 1.0)
     rainbow (3.0.0)
-    raindrops (0.19.1)
+    raindrops (0.19.2)
     rake (13.0.3)
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
@@ -489,7 +483,7 @@ GEM
       rubocop-ast (>= 1.5.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.5.0)
+    rubocop-ast (1.6.0)
       parser (>= 3.0.1.1)
     rubocop-performance (1.11.2)
       rubocop (>= 1.7.0, < 2.0)
@@ -534,9 +528,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sshkit (1.21.2)
-      net-scp (>= 1.1.2)
-      net-ssh (>= 2.8.0)
     ssrf_filter (1.0.7)
     standard (1.1.1)
       rubocop (= 1.14.0)
@@ -557,7 +548,7 @@ GEM
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    tins (1.29.0)
+    tins (1.29.1)
       sync
     twitter-text (3.1.0)
       idn-ruby
@@ -580,7 +571,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    websocket-driver (0.7.3)
+    websocket-driver (0.7.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     will_paginate (3.3.0)
@@ -589,6 +580,7 @@ GEM
     zeitwerk (2.4.2)
 
 PLATFORMS
+  arm64-darwin-20
   ruby
   x86_64-darwin-20
   x86_64-linux
@@ -604,9 +596,6 @@ DEPENDENCIES
   binding_of_caller
   bootsnap
   byebug
-  capistrano
-  capistrano-bundler
-  capistrano-rails
   capybara
   carrierwave!
   carrierwave_direct!
@@ -653,6 +642,7 @@ DEPENDENCIES
   raindrops
   redcarpet
   redis
+  resolv!
   responders
   reverse_markdown
   rmagick
