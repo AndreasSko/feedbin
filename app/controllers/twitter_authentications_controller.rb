@@ -1,5 +1,6 @@
 class TwitterAuthenticationsController < ApplicationController
   def new
+    session[:twitter_settings_redirect] = "true" if params[:mode] == "settings"
     klass = TwitterApi.new
     response = klass.request_token
     if response.token && response.secret
@@ -18,13 +19,28 @@ class TwitterAuthenticationsController < ApplicationController
       )
       redirect_to settings_url, notice: "Unknown Twitter error."
     end
-  rescue OAuth => e
+  rescue Net::HTTPFatalError => e
+    Honeybadger.notify(
+      error_class: "TwitterApis#new",
+      error_message: "Twitter API failure",
+      parameters: {exception: e}
+    )
+    if session.delete(:twitter_settings_redirect)
+      redirect_to settings_newsletters_pages_url, alert: "Twitter API is not responding."
+    else
+      redirect_to root_url, alert: "Twitter API is not responding."
+    end
+  rescue OAuth::Error => e
     Honeybadger.notify(
       error_class: "TwitterApis#new",
       error_message: "Twitter failure",
       parameters: {exception: e}
     )
-    redirect_to settings_url, alert: "Unknown Twitter error."
+    if session.delete(:twitter_settings_redirect)
+      redirect_to settings_newsletters_pages_url, notice: "Unknown Twitter error."
+    else
+      redirect_to root_url, alert: "Unknown Twitter error."
+    end
   end
 
   def save
@@ -53,7 +69,7 @@ class TwitterAuthenticationsController < ApplicationController
         redirect_to root_url, alert: "Feedbin needs your permission to activate Twitter."
       end
     end
-  rescue OAuth => e
+  rescue OAuth::Error => e
     Honeybadger.notify(
       error_class: "TwitterApisController#save",
       error_message: "Twitter failure",
