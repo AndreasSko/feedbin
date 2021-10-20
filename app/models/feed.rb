@@ -160,10 +160,12 @@ class Feed < ApplicationRecord
     Digest::SHA256.hexdigest([id, Rails.application.secrets.secret_key_base].join("-"))
   end
 
-  def web_sub_callback
+  def web_sub_callback(debug: false)
     uri = URI(ENV["PUSH_URL"])
     signature = OpenSSL::HMAC.hexdigest("sha256", web_sub_secret, id.to_s)
-    Rails.application.routes.url_helpers.web_sub_verify_url(id, web_sub_callback_signature, protocol: uri.scheme, host: uri.host)
+    params = {}
+    params[:debug] = true if debug
+    Rails.application.routes.url_helpers.web_sub_verify_url(id, web_sub_callback_signature, protocol: uri.scheme, host: uri.host, params: params)
   end
 
   def web_sub_callback_signature
@@ -182,15 +184,27 @@ class Feed < ApplicationRecord
     end
   end
 
+  def self_url
+    if youtube_channel_id
+      "https://www.youtube.com/xml/feeds/videos.xml?channel_id=#{youtube_channel_id}"
+    else
+      self[:self_url]
+    end
+  end
+
   def known_hubs
-    if youtube?
+    if youtube_channel_id
       ["https://pubsubhubbub.appspot.com"]
     end
   end
 
-  def youtube?
-    youtube_prefix = Regexp.new(/^https?:\/\/www\.youtube\.com\//)
-    feed_url =~ youtube_prefix && self_url =~ youtube_prefix
+  def youtube_channel_id
+    youtube_prefix = Regexp.new(/^https?:\/\/www\.youtube\.com\/feeds\/videos\.xml\?channel_id=([^#\?&]*)/)
+    if feed_url =~ youtube_prefix && self[:self_url] =~ youtube_prefix
+      $1
+    else
+      nil
+    end
   end
 
   private
