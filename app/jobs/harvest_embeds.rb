@@ -24,10 +24,12 @@ class HarvestEmbeds
     video_id = entry.data&.dig("youtube_video_id")
     want.push(video_id) if video_id
 
+    add_missing_to_queue(want)
+  end
+
+  def add_missing_to_queue(want)
     have = Embed.youtube_video.where(provider_id: want).pluck(:provider_id)
     want = (want - have).uniq
-
-
     add_to_queue(SET_NAME, want) if want.present?
   end
 
@@ -42,21 +44,15 @@ class HarvestEmbeds
     items = []
 
     videos = youtube_api(type: "videos", ids: ids, parts: ["snippet", "contentDetails"])
-
-    want = videos.dig("items")&.map { |video| video.dig("snippet", "channelId") }
-    have = Embed.youtube_channel.where(provider_id: want).pluck(:provider_id)
-    want = (want - have).uniq
-
     items.concat(videos.dig("items")&.map { |item, array|
       Embed.new(data: item, provider_id: item.dig("id"), parent_id: item.dig("snippet", "channelId"), source: :youtube_video)
     })
 
-    if want.present?
-      channels = youtube_api(type: "channels", ids: want, parts: ["snippet"])
-      items.concat(channels.dig("items")&.map { |item|
-        Embed.new(data: item, provider_id: item.dig("id"), source: :youtube_channel)
-      })
-    end
+    channel_ids = videos.dig("items")&.map { |video| video.dig("snippet", "channelId") }.uniq
+    channels = youtube_api(type: "channels", ids: channel_ids, parts: ["snippet"])
+    items.concat(channels.dig("items")&.map { |item|
+      Embed.new(data: item, provider_id: item.dig("id"), source: :youtube_channel)
+    })
 
     Embed.import(items, on_duplicate_key_update: {conflict_target: [:source, :provider_id], columns: [:data]}) if items.present?
 
