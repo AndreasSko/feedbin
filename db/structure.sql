@@ -17,24 +17,10 @@ CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
---
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
 
 
 SET default_tablespace = '';
@@ -329,7 +315,8 @@ CREATE TABLE public.entries (
     recently_played_entries_count bigint DEFAULT 0,
     thread_id bigint,
     settings jsonb,
-    main_tweet_id text
+    main_tweet_id text,
+    queued_entries_count bigint DEFAULT 0 NOT NULL
 );
 
 
@@ -442,7 +429,8 @@ CREATE TABLE public.feeds (
     active boolean DEFAULT true,
     options json,
     hubs text[],
-    settings jsonb
+    settings jsonb,
+    standalone_request_at timestamp(6) without time zone
 );
 
 
@@ -635,6 +623,42 @@ CREATE SEQUENCE public.plans_id_seq
 --
 
 ALTER SEQUENCE public.plans_id_seq OWNED BY public.plans.id;
+
+
+--
+-- Name: queued_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.queued_entries (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    entry_id bigint NOT NULL,
+    feed_id bigint NOT NULL,
+    "order" bigint DEFAULT EXTRACT(epoch FROM now()) NOT NULL,
+    progress bigint DEFAULT 0 NOT NULL,
+    duration bigint DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: queued_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.queued_entries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: queued_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.queued_entries_id_seq OWNED BY public.queued_entries.id;
 
 
 --
@@ -832,7 +856,8 @@ CREATE TABLE public.subscriptions (
     show_retweets boolean DEFAULT true,
     media_only boolean DEFAULT false,
     kind bigint DEFAULT 0,
-    view_mode bigint DEFAULT 0
+    view_mode bigint DEFAULT 0,
+    show_status bigint DEFAULT 0 NOT NULL
 );
 
 
@@ -1280,6 +1305,13 @@ ALTER TABLE ONLY public.plans ALTER COLUMN id SET DEFAULT nextval('public.plans_
 
 
 --
+-- Name: queued_entries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queued_entries ALTER COLUMN id SET DEFAULT nextval('public.queued_entries_id_seq'::regclass);
+
+
+--
 -- Name: recently_played_entries id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1518,6 +1550,14 @@ ALTER TABLE ONLY public.newsletter_senders
 
 ALTER TABLE ONLY public.plans
     ADD CONSTRAINT plans_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: queued_entries queued_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queued_entries
+    ADD CONSTRAINT queued_entries_pkey PRIMARY KEY (id);
 
 
 --
@@ -1823,6 +1863,13 @@ CREATE INDEX index_feeds_on_push_expiration ON public.feeds USING btree (push_ex
 
 
 --
+-- Name: index_feeds_on_standalone_request_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feeds_on_standalone_request_at ON public.feeds USING btree (standalone_request_at DESC) WHERE (standalone_request_at IS NOT NULL);
+
+
+--
 -- Name: index_import_items_on_import_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1862,6 +1909,41 @@ CREATE UNIQUE INDEX index_newsletter_senders_on_feed_id ON public.newsletter_sen
 --
 
 CREATE INDEX index_newsletter_senders_on_token ON public.newsletter_senders USING btree (token);
+
+
+--
+-- Name: index_queued_entries_on_entry_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_queued_entries_on_entry_id ON public.queued_entries USING btree (entry_id);
+
+
+--
+-- Name: index_queued_entries_on_feed_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_queued_entries_on_feed_id ON public.queued_entries USING btree (feed_id);
+
+
+--
+-- Name: index_queued_entries_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_queued_entries_on_user_id ON public.queued_entries USING btree (user_id);
+
+
+--
+-- Name: index_queued_entries_on_user_id_and_entry_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_queued_entries_on_user_id_and_entry_id ON public.queued_entries USING btree (user_id, entry_id);
+
+
+--
+-- Name: index_queued_entries_on_user_id_and_order; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_queued_entries_on_user_id_and_order ON public.queued_entries USING btree (user_id, "order");
 
 
 --
@@ -2016,6 +2098,13 @@ CREATE INDEX index_subscriptions_on_media_only ON public.subscriptions USING btr
 --
 
 CREATE INDEX index_subscriptions_on_show_retweets ON public.subscriptions USING btree (show_retweets);
+
+
+--
+-- Name: index_subscriptions_on_show_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_subscriptions_on_show_status ON public.subscriptions USING btree (show_status);
 
 
 --
@@ -2272,11 +2361,27 @@ ALTER TABLE ONLY public.newsletter_senders
 
 
 --
+-- Name: queued_entries fk_rails_83978fda52; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queued_entries
+    ADD CONSTRAINT fk_rails_83978fda52 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: unreads fk_rails_90f07702a3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.unreads
     ADD CONSTRAINT fk_rails_90f07702a3 FOREIGN KEY (entry_id) REFERENCES public.entries(id) ON DELETE CASCADE;
+
+
+--
+-- Name: queued_entries fk_rails_9556652818; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queued_entries
+    ADD CONSTRAINT fk_rails_9556652818 FOREIGN KEY (entry_id) REFERENCES public.entries(id) ON DELETE CASCADE;
 
 
 --
@@ -2451,6 +2556,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200810160825'),
 ('20201230004844'),
 ('20210102005228'),
-('20210601200027');
+('20210601200027'),
+('20220128221704'),
+('20220204123745'),
+('20220204142012'),
+('20220204194100');
 
 

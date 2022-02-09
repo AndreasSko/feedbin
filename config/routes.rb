@@ -237,6 +237,20 @@ Rails.application.routes.draw do
 
   constraints subdomain: "api" do
     namespace :api, path: nil do
+      namespace :public do
+        namespace :v1 do
+          resources :feeds, only: :show
+        end
+      end
+
+      namespace :podcasts do
+        namespace :v1 do
+          resources :feeds, only: :show
+          resources :subscriptions, only: [:index, :create, :update, :destroy]
+          resources :queued_entries, only: [:index, :create, :destroy]
+        end
+      end
+
       namespace :v2 do
         resources :feeds, only: [:show] do
           resources :entries, only: [:index, :show], controller: :feeds_entries
