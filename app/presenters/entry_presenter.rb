@@ -75,7 +75,7 @@ class EntryPresenter < BasePresenter
 
   def parsed_date(date, format)
     date = Time.parse(date)
-    date.to_s(format)
+    date.to_formatted_s(format)
   rescue Exception
     nil
   end
@@ -295,7 +295,7 @@ class EntryPresenter < BasePresenter
   end
 
   def media_image
-    entry.itunes_image
+    entry.itunes_image || entry.feed.custom_icon
   end
 
   def extracted_articles
@@ -454,13 +454,9 @@ class EntryPresenter < BasePresenter
   end
 
   def audio_duration
-    if media_duration && parts = media_duration.split(":").map(&:to_i)
-      if parts.length == 3
-        hours, minutes, seconds = parts
-        result = hours * 60 + minutes
-        "#{result} minutes"
-      end
-    end
+    minutes = entry.audio_duration && entry.audio_duration / 60
+    return nil if minutes.nil?
+    "#{minutes} #{'minute'.pluralize(minutes)}"
   rescue
     nil
   end

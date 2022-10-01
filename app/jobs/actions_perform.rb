@@ -59,15 +59,10 @@ class ActionsPerform
 
   def send_ios_notification(user_ids)
     if Sidekiq::Queue.new("images").size > 10
-      job = EntryImage.new
+      job = ImageCrawler::EntryImage.new
       job.entry = @entry
       if job_args = job.build_job
-        Sidekiq::Client.push(
-          "args" => job_args,
-          "class" => "FindImageCritical",
-          "queue" => "image_parallel_critical",
-          "retry" => false
-        )
+        ImageCrawler::FindImageCritical.perform_async(*job_args)
       end
     end
     DevicePushNotificationSend.perform_in(1.minute, user_ids, @entry.id, true)
