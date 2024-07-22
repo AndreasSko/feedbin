@@ -154,7 +154,7 @@ class feedbin.CountsBehavior
           if result.status == 422
             feedbin.refreshRetry(@)
         )
-      ), 10000
+      ), 1000
 
     if @isUpdated(entry.id)
       feedbin.Counts.get().removeEntry(entry.id, entry.feed_id, 'updated')
